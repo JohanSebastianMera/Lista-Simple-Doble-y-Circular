@@ -1,92 +1,75 @@
-# Lista simple: lista de compras del mercado
+# Lista simple – Lista de compras del mercado
+
+Programa en Python que usa una lista enlazada simple para manejar una
+lista de compras desde un menú en la consola.
 
 ## ¿Qué es una lista simple?
 
-Es una fila de "cajitas" (nodos). Cada cajita guarda **un dato** y una
-**flecha al siguiente**. La última cajita apunta a `None`, que significa "ya no hay más".
-
-```
+Es una cadena de nodos. Cada nodo guarda un dato y una flecha al
+siguiente nodo. El último apunta a `None` (no hay más).
 cabeza
   ↓
 [Arroz] → [Leche] → [Huevos] → None
-```
 
-- **cabeza**: es la primera cajita. Desde ella se recorre toda la lista.
-- **tamano**: cuenta cuántas cajitas hay.
-- Solo se puede caminar **hacia adelante**.
+## Archivos
+
+¿Para que sirven?
+
+| `nodos.py` | Tiene la clase `Nodo` (el dato y la flecha al siguiente). |
+| `lista_simple.py` | Tiene la clase `ListaSimple` y el menú. |
+
+Los dos archivos deben estar en la misma carpeta.
 
 ## ¿Cómo se ejecuta?
 
-Desde la carpeta `listas-enlazadas` se abre la terminal y se escribe:
+Se necesita Python: 3.10 o superior. 
+Terminal o consola ejecutar: python lista_simple.py
 
-```bash
-python lista_simple.py
-```
+## Métodos de la clase `ListaSimple`
 
-Se necesita Python 3.10 o más nuevo. No hay que instalar nada más.
+¿Qué hace?
+| `esta_vacia()` | `True` si la lista está vacía, `False` si tiene algo. 
+| `len(lista)` | Cuántos datos hay. 
+| `vaciar()` | Borra toda la lista. 
+| `insertar_inicio(dato)` | Agrega el dato de primero. 
+| `insertar_final(dato)` | Agrega el dato de último. 
+| `insertar_en(pos, dato)` | Agrega el dato en una posición. Si no existe, da error. 
+| `eliminar(dato)` | Borra el dato. `True` si lo borró, `False` si no estaba. 
+| `buscar(dato)` | Dice la posición del dato, o `-1` si no está. 
+| `print(lista)` / `recorrer()` | Muestra la lista: `Arroz,Leche,Huevos,None` 
+| `recorrer_inverso()` | Muestra la lista del último al primero (de forma recursiva). 
+| `invertir()` | Le da la vuelta a la lista cambiando las flechas. 
 
-> El archivo `nodos.py` tiene que estar en la misma carpeta, porque de ahí sale la clase `Nodo`.
+> Nota:**Posiciones:** la lista cuenta desde **0**, pero el menú pide el puesto desde **1**.
 
-## ¿Qué hace cada método?
+## Menú
 
-| Método | ¿Qué hace? |
+| Opción | ¿Qué hace? |
 |---|---|
-| `esta_vacia()` | Dice `True` si la lista no tiene nada y `False` si tiene algo. |
-| `len(lista)` | Dice cuántos datos hay. |
-| `vaciar()` | Borra toda la lista. |
-| `insertar_inicio(dato)` | Pone el dato de primero. |
-| `insertar_final(dato)` | Pone el dato de último (camina hasta el final). |
-| `insertar_en(pos, dato)` | Pone el dato en una posición. Si la posición no existe, da error. |
-| `eliminar(dato)` | Borra el dato. Devuelve `True` si lo borró y `False` si no estaba. |
-| `buscar(dato)` | Dice en qué posición está el dato, o `-1` si no está. |
-| `print(lista)` / `recorrer()` | Muestra la lista así: `Arroz -> Leche -> None`. |
-| `recorrer_inverso()` | Muestra la lista del último al primero (usa una función que se llama a sí misma). |
-| `invertir()` | Le da la vuelta a la lista cambiando las flechas. **Ahora está comentado en el código** (ver la nota de abajo). |
-
-> **Ojo con las posiciones:** por dentro la lista cuenta desde **0**, pero el
-> menú le pide al usuario los puestos desde **1**, como en una lista de papel.
-> Por eso el código resta o suma 1.
-
-## Opciones del menú
-
-| Opción | Qué hace en la lista de compras |
-|---|---|
-| 1 | **Compra urgente**: el producto queda de primero. |
-| 2 | **Anotar producto** al final. |
-| 3 | **Anotar en un puesto** específico. |
-| 4 | **Tachar** un producto que ya se compró. |
-| 5 | **¿Ya lo anoté?**: busca un producto y dice su puesto. |
-| 6 | **Ver lista**: dice cuántos productos faltan. |
-| 7 | **Leer de abajo hacia arriba**. |
-| 8 | **Darle la vuelta** a la lista (usa `invertir`). |
-| 9 | **Cargar ejemplo**: Arroz, Leche, Huevos, Pan, Café, Panela y Queso. |
+| 1 | Compra urgente: agrega el producto al inicio. |
+| 2 | Anota un producto al final. |
+| 3 | Anota un producto en un puesto. |
+| 4 | Tacha (elimina) un producto ya comprado. |
+| 5 | Busca un producto y dice su puesto. |
+| 6 | Dice cuántos productos faltan. |
+| 7 | Muestra la lista de abajo hacia arriba. |
+| 8 | Le da la vuelta a la lista. |
+| 9 | Carga un mercado de ejemplo: Arroz, Leche, Huevos, Pan, Café, Panela y Queso. |
 | 0 | Salir. |
 
-Después de cada opción el programa muestra cómo quedó la lista.
-Si se escribe algo mal (por ejemplo letras donde va un número), sale un
-mensaje de error y el programa **no se cierra**.
+## Ejemplo
 
-> **Nota:** el método `invertir()` está comentado (entre `'''`). Mientras siga
-> así, la **opción 8 cierra el programa** con un error. Para que funcione hay que
-> quitar las `'''` que lo rodean.
-
-## Ejemplo de uso
-
-```
 Elige una opción: 9
 Se cargó el mercado de ejemplo.
-Lista: Arroz -> Leche -> Huevos -> Pan -> Café -> Panela -> Queso -> None
 
-Elige una opción: 4
-Producto que ya compraste: Leche
-Leche tachado de la lista.
-Lista: Arroz -> Huevos -> Pan -> Café -> Panela -> Queso -> None
-
-Elige una opción: 5
-Producto a buscar: Café
-Café está en el puesto 4
-Lista: Arroz -> Huevos -> Pan -> Café -> Panela -> Queso -> None
+Elige una opción: 6
+Faltan 7 producto(s) por comprar.
 
 Elige una opción: 7
-De abajo hacia arriba: Queso -> Panela -> Café -> Pan -> Huevos -> Arroz
-```
+De abajo hacia arriba: Queso,Panela,Café,Pan,Huevos,Leche,Arroz
+
+Elige una opción: 8
+Lista invertida: ahora el último va primero.
+
+Elige una opción: 0
+¡Buen mercado!
