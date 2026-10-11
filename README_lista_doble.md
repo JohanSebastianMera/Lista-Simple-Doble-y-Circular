@@ -32,18 +32,18 @@ En la terminal o consola ejecutar: python lista_doble.py
 ## Métodos de la clase `ListaDoble`
 
  ¿Qué hace? 
-|---|---|
-| `esta_vacia()` | `True` si la lista está vacía, `False` si tiene algo. 
-| `len(lista)` | Cuántos datos hay. 
-| `vaciar()` | Borra toda la lista. 
-| `insertar_inicio(dato)` | Agrega el dato de primero. 
-| `insertar_final(dato)` | Agrega el dato de último (usa la cola, no recorre). 
-| `insertar_en(pos, dato)` | Agrega el dato en una posición. Si no existe, da error. 
-| `eliminar(dato)` | Borra el dato. `True` si lo borró, `False` si no estaba. 
-| `eliminar_en(pos)` | Borra el dato de una posición y lo devuelve. Si no existe, da error. 
-| `buscar(dato)` | Dice la posición del dato, o `-1` si no está. 
-| `print(lista)` / `recorrer()` | Muestra la lista: `None <- A <-> B <-> C -> None` 
-| `recorrer_inverso()` | Muestra la lista del último al primero, usando la flecha "anterior": `C <-> B <-> A` 
+
+ `esta_vacia()` | `True` si la lista está vacía, `False` si tiene algo. 
+ `len(lista)` | Cuántos datos hay. 
+ `vaciar()` | Borra toda la lista. 
+ `insertar_inicio(dato)` | Agrega el dato de primero. 
+ `insertar_final(dato)` | Agrega el dato de último (usa la cola, no recorre). 
+ `insertar_en(pos, dato)` | Agrega el dato en una posición. Si no existe, da error. 
+ `eliminar(dato)` | Borra el dato. `True` si lo borró, `False` si no estaba. 
+ `eliminar_en(pos)` | Borra el dato de una posición y lo devuelve. Si no existe, da error.
+ `buscar(dato)` | Dice la posición del dato, o `-1` si no está. 
+ `print(lista)` / `recorrer()` | Muestra la lista: `None <- A <-> B <-> C -> None` 
+ `recorrer_inverso()` | Muestra la lista del último al primero, usando la flecha "anterior": `C <-> B <-> A` 
 
 **Métodos de apoyo** (los usa la clase por dentro):
 
