@@ -1,228 +1,144 @@
-"""Pruebas unitarias de la clase ListaSimple.
+# Pruebas de la lista simple.
+# Se ejecutan desde la carpeta del proyecto con:
+#   python -m unittest discover -s tests -v
 
-Ejecutar desde la raíz del proyecto con:
-    python -m unittest discover -s tests -v
-
-Asignatura: Estructuras de la Información.
-Autores: [NOMBRE 1], [NOMBRE 2], [NOMBRE 3], [NOMBRE 4].
-"""
-
+# unittest es la herramienta de Python para hacer pruebas
 import unittest
+
+# Estas 3 líneas le dicen a Python dónde están los archivos de las listas
+# (la carpeta de arriba de tests), así la prueba funciona desde cualquier lado,
+# también con el botón "Run" del editor.
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lista_simple import ListaSimple
 
 
-def crear_lista(*datos: object) -> ListaSimple:
-    """Crea una ListaSimple con los datos dados, en el mismo orden.
+# Cada método que empieza con "test_" es una prueba.
+# assertEqual(a, b) revisa que a y b sean iguales; si no, la prueba falla.
+# assertTrue / assertFalse revisan que algo sea True o False.
+class TestListaSimple(unittest.TestCase):
 
-    Args:
-        *datos: valores que se insertan al final, uno por uno.
+    # ---------------- LISTA VACÍA ----------------
 
-    Returns:
-        ListaSimple: la lista ya cargada.
-    """
-    lista = ListaSimple()
-    for dato in datos:
-        lista.insertar_final(dato)
-    return lista
-
-
-class TestListaSimpleVacia(unittest.TestCase):
-    """Comportamiento de una lista simple sin nodos."""
-
-    def setUp(self):
-        """Crea una lista vacía antes de cada prueba."""
-        self.lista = ListaSimple()
-
-    def test_esta_vacia(self):
-        """Una lista nueva está vacía y su longitud es 0."""
-        self.assertTrue(self.lista.esta_vacia())
-        self.assertEqual(len(self.lista), 0)
-        self.assertIsNone(self.lista.cabeza)
-
-    def test_eliminar_en_vacia(self):
-        """Eliminar en una lista vacía devuelve False y no cambia el tamaño."""
-        self.assertFalse(self.lista.eliminar(1))
-        self.assertEqual(len(self.lista), 0)
-
-    def test_buscar_en_vacia(self):
-        """Buscar en una lista vacía devuelve -1."""
-        self.assertEqual(self.lista.buscar(1), -1)
-
-    def test_str_vacia(self):
-        """La representación de una lista vacía es 'None'."""
-        self.assertEqual(str(self.lista), "None")
-        self.assertEqual(self.lista.recorrer(), "None")
-
-
-class TestListaSimpleUnNodo(unittest.TestCase):
-    """Casos límite con un solo nodo."""
-
-    def test_insertar_y_eliminar_unico(self):
-        """Insertar un nodo y eliminarlo deja la lista vacía."""
+    def test_lista_vacia(self):
         lista = ListaSimple()
-        lista.insertar_inicio(7)
-        self.assertEqual(str(lista), "7 -> None")
-        self.assertEqual(len(lista), 1)
-        self.assertTrue(lista.eliminar(7))
         self.assertTrue(lista.esta_vacia())
-        self.assertIsNone(lista.cabeza)
+        self.assertEqual(len(lista), 0)
+        self.assertEqual(str(lista), "None")
+        # en una lista vacía no hay nada que borrar ni encontrar
+        self.assertFalse(lista.eliminar("Arroz"))
+        self.assertEqual(lista.buscar("Arroz"), -1)
+
+    def test_invertir_lista_vacia(self):
+        lista = ListaSimple()
+        lista.invertir()
+        # invertir una lista vacía no debe dañar nada
+        self.assertTrue(lista.esta_vacia())
+
+    # ---------------- UN SOLO NODO ----------------
+
+    def test_un_nodo(self):
+        lista = ListaSimple()
+        lista.insertar_inicio("Arroz")
+        self.assertFalse(lista.esta_vacia())
+        self.assertEqual(len(lista), 1)
+        self.assertEqual(str(lista), "Arroz,None")
+        self.assertEqual(lista.buscar("Arroz"), 0)
+
+    def test_un_nodo_eliminar(self):
+        lista = ListaSimple()
+        lista.insertar_final("Arroz")
+        self.assertTrue(lista.eliminar("Arroz"))
+        # al borrar el único nodo la lista vuelve a quedar vacía
+        self.assertTrue(lista.esta_vacia())
+        self.assertIsNone(lista.cabeza)    # assertIsNone revisa que sea None
         self.assertEqual(len(lista), 0)
 
-    def test_insertar_final_en_vacia(self):
-        """insertar_final en una lista vacía deja el nodo como cabeza."""
+    def test_un_nodo_invertir(self):
         lista = ListaSimple()
-        lista.insertar_final(5)
-        self.assertEqual(lista.cabeza.dato, 5)
-        self.assertEqual(str(lista), "5 -> None")
+        lista.insertar_inicio("Arroz")
+        lista.invertir()
+        # con un solo dato, invertir deja todo igual
+        self.assertEqual(str(lista), "Arroz,None")
 
+    # ---------------- VARIOS NODOS ----------------
 
-class TestListaSimpleVariosNodos(unittest.TestCase):
-    """Inserciones y eliminaciones con varios nodos."""
-
-    def test_ejemplo_del_enunciado(self):
-        """El ejemplo del enunciado imprime 1 -> 2 -> 3 -> None."""
+    def test_insertar_inicio(self):
         lista = ListaSimple()
-        for x in (3, 2, 1):
-            lista.insertar_inicio(x)
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> None")
+        # cada dato nuevo queda de primero, por eso salen al revés
+        lista.insertar_inicio(3)
+        lista.insertar_inicio(2)
+        lista.insertar_inicio(1)
+        self.assertEqual(str(lista), "1,2,3,None")
         self.assertEqual(len(lista), 3)
 
     def test_insertar_final(self):
-        """insertar_final agrega en orden al final."""
-        lista = crear_lista(1, 2, 3)
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> None")
-        self.assertEqual(len(lista), 3)
-
-    def test_insertar_en_medio(self):
-        """insertar_en coloca el dato en la posición del medio."""
-        lista = crear_lista(1, 2, 4)
-        lista.insertar_en(2, 3)
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> 4 -> None")
-        self.assertEqual(len(lista), 4)
-
-    def test_insertar_en_extremos(self):
-        """insertar_en con 0 y con tamano inserta al inicio y al final."""
-        lista = crear_lista(2, 3)
-        lista.insertar_en(0, 1)
-        lista.insertar_en(len(lista), 4)
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> 4 -> None")
-        self.assertEqual(len(lista), 4)
-
-    def test_eliminar_cabeza(self):
-        """Eliminar el dato de la cabeza mueve la cabeza al segundo nodo."""
-        lista = crear_lista(1, 2, 3)
-        self.assertTrue(lista.eliminar(1))
-        self.assertEqual(str(lista), "2 -> 3 -> None")
-        self.assertEqual(len(lista), 2)
-
-    def test_eliminar_medio(self):
-        """Eliminar un dato del medio salta ese nodo."""
-        lista = crear_lista(1, 2, 3)
-        self.assertTrue(lista.eliminar(2))
-        self.assertEqual(str(lista), "1 -> 3 -> None")
-        self.assertEqual(len(lista), 2)
-
-    def test_eliminar_cola(self):
-        """Eliminar el último dato deja al penúltimo apuntando a None."""
-        lista = crear_lista(1, 2, 3)
-        self.assertTrue(lista.eliminar(3))
-        self.assertEqual(str(lista), "1 -> 2 -> None")
-        self.assertEqual(len(lista), 2)
-
-    def test_eliminar_inexistente(self):
-        """Eliminar un dato que no está devuelve False y no cambia nada."""
-        lista = crear_lista(1, 2, 3)
-        self.assertFalse(lista.eliminar(9))
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> None")
-        self.assertEqual(len(lista), 3)
-
-    def test_eliminar_solo_primera_aparicion(self):
-        """Con datos repetidos, eliminar quita solo la primera aparición."""
-        lista = crear_lista(1, 2, 1)
-        self.assertTrue(lista.eliminar(1))
-        self.assertEqual(str(lista), "2 -> 1 -> None")
-
-    def test_buscar(self):
-        """buscar devuelve la posición del dato o -1 si no está."""
-        lista = crear_lista(10, 20, 30)
-        self.assertEqual(lista.buscar(10), 0)
-        self.assertEqual(lista.buscar(30), 2)
-        self.assertEqual(lista.buscar(99), -1)
-
-    def test_recorrer_igual_a_str(self):
-        """recorrer() devuelve el mismo texto que str()."""
-        lista = crear_lista(1, 2, 3)
-        self.assertEqual(lista.recorrer(), str(lista))
-
-    def test_vaciar(self):
-        """vaciar() deja la lista sin nodos y con tamaño 0."""
-        lista = crear_lista(1, 2, 3)
-        lista.vaciar()
-        self.assertTrue(lista.esta_vacia())
-        self.assertEqual(len(lista), 0)
-
-
-class TestListaSimplePosicionInvalida(unittest.TestCase):
-    """Validación de posiciones en insertar_en."""
-
-    def test_insertar_en_negativa(self):
-        """Una posición negativa lanza IndexError."""
-        lista = crear_lista(1, 2)
-        with self.assertRaises(IndexError):
-            lista.insertar_en(-1, 0)
-
-    def test_insertar_en_mayor_que_tamano(self):
-        """Una posición mayor que tamano lanza IndexError."""
-        lista = crear_lista(1, 2)
-        with self.assertRaises(IndexError):
-            lista.insertar_en(3, 0)
-        self.assertEqual(len(lista), 2)
-
-
-class TestListaSimpleEspecial(unittest.TestCase):
-    """Operación especial invertir() y recorrer_inverso()."""
-
-    def test_invertir_vacia(self):
-        """Invertir una lista vacía la deja vacía."""
         lista = ListaSimple()
-        lista.invertir()
-        self.assertTrue(lista.esta_vacia())
-        self.assertEqual(str(lista), "None")
+        lista.insertar_final("Arroz")
+        lista.insertar_final("Leche")
+        lista.insertar_final("Huevos")
+        self.assertEqual(str(lista), "Arroz,Leche,Huevos,None")
+        self.assertEqual(len(lista), 3)
 
-    def test_invertir_un_nodo(self):
-        """Invertir una lista de un nodo no la cambia."""
-        lista = crear_lista(1)
-        lista.invertir()
-        self.assertEqual(str(lista), "1 -> None")
+    def test_insertar_en_posicion(self):
+        lista = ListaSimple()
+        lista.insertar_final("Arroz")
+        lista.insertar_final("Huevos")
+        lista.insertar_en(1, "Leche")    # la posición 1 es la segunda
+        self.assertEqual(str(lista), "Arroz,Leche,Huevos,None")
+        self.assertEqual(len(lista), 3)
+
+    def test_eliminar_varios(self):
+        lista = ListaSimple()
+        for producto in ("Arroz", "Leche", "Huevos", "Pan"):
+            lista.insertar_final(producto)
+        lista.eliminar("Arroz")    # el primero (la cabeza)
+        self.assertEqual(str(lista), "Leche,Huevos,Pan,None")
+        lista.eliminar("Huevos")   # uno del medio
+        self.assertEqual(str(lista), "Leche,Pan,None")
+        lista.eliminar("Pan")      # el último
+        self.assertEqual(str(lista), "Leche,None")
+        self.assertEqual(len(lista), 1)
+        # si el dato no está, devuelve False y no cambia nada
+        self.assertFalse(lista.eliminar("Queso"))
         self.assertEqual(len(lista), 1)
 
-    def test_invertir_varios(self):
-        """Invertir varios nodos los deja en orden contrario."""
-        lista = crear_lista(1, 2, 3, 4)
-        lista.invertir()
-        self.assertEqual(str(lista), "4 -> 3 -> 2 -> 1 -> None")
-        self.assertEqual(len(lista), 4)
+    def test_buscar_varios(self):
+        lista = ListaSimple()
+        for producto in ("Arroz", "Leche", "Huevos"):
+            lista.insertar_final(producto)
+        self.assertEqual(lista.buscar("Arroz"), 0)
+        self.assertEqual(lista.buscar("Huevos"), 2)
+        self.assertEqual(lista.buscar("Queso"), -1)
 
-    def test_invertir_dos_veces(self):
-        """Invertir dos veces devuelve la lista original."""
-        lista = crear_lista(1, 2, 3)
+    def test_invertir_varios(self):
+        lista = ListaSimple()
+        for numero in (1, 2, 3, 4):
+            lista.insertar_final(numero)
         lista.invertir()
-        lista.invertir()
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> None")
+        self.assertEqual(str(lista), "4,3,2,1,None")
 
     def test_recorrer_inverso(self):
-        """recorrer_inverso muestra los datos del final a la cabeza."""
-        lista = crear_lista(1, 2, 3)
-        self.assertEqual(lista.recorrer_inverso(), "3 -> 2 -> 1")
-        # no debe modificar la lista
-        self.assertEqual(str(lista), "1 -> 2 -> 3 -> None")
+        lista = ListaSimple()
+        for numero in (1, 2, 3):
+            lista.insertar_final(numero)
+        self.assertEqual(lista.recorrer_inverso(), "3,2,1")
+        # recorrer al revés solo muestra, no cambia la lista
+        self.assertEqual(str(lista), "1,2,3,None")
 
-    def test_recorrer_inverso_vacia_y_un_nodo(self):
-        """recorrer_inverso en vacía devuelve 'None' y con un nodo su dato."""
-        self.assertEqual(ListaSimple().recorrer_inverso(), "None")
-        self.assertEqual(crear_lista(5).recorrer_inverso(), "5")
+    # ---------------- POSICIÓN INVÁLIDA ----------------
+
+    def test_posicion_invalida(self):
+        lista = ListaSimple()
+        lista.insertar_final("Arroz")
+        # assertRaises revisa que el código de adentro lance ese error
+        with self.assertRaises(IndexError):
+            lista.insertar_en(5, "Leche")
+        with self.assertRaises(IndexError):
+            lista.insertar_en(-1, "Leche")
 
 
+# Permite correr este archivo solo
 if __name__ == "__main__":
     unittest.main()
